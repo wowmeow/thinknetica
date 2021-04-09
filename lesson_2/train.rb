@@ -32,12 +32,12 @@ class Train
   end
 
   def move_forward
-    if route.stations[@station_index] != route.stations.last
-      current_station.send_train(self)
-      @station_index += 1
-      current_station.get_train(self)
-      current_station
-    end
+    return unless next_station
+
+    current_station.send_train(self)
+    @station_index += 1
+    current_station.get_train(self)
+    current_station
   end
 
   def move_back
