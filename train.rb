@@ -16,6 +16,7 @@ class Train
     @current_speed = 0 if @current_speed.positive?
   end
 
+
   def add_wagon
     @quantity_wagons += 1 if current_speed.zero?
   end
