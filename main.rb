@@ -17,34 +17,20 @@ class Main
   end
 
   def menu
-    puts "1. Создать новую станцию
-2. Создать новый поезд
-3. Создать новый маршрут
-4. Добавить/удалить промежуточную станцию
-5. Назначить маршрут поезду
-6. Добавлять вагоны к поезду
-7. Отцеплять вагоны от поезда
-8. Перемещать поезд по маршруту вперед и назад
-9. Просматривать список станций
-10. Просмотреть список поездов на станции
-\nВведите номер из меню:"
-
+    menu_points
     user_input = gets.chomp.to_i
     case user_input
     when 1
       create_station
     when 2
-      create_train
+      add_train
     when 3
-      view_stations_list
       create_route
     when 4
       manage_route
     when 5
-      view_trains_list
       assign_train_route
     when 6
-      view_trains_list
       add_wagon_to_train
     when 7
       delete_wagon_from_train
@@ -59,37 +45,53 @@ class Main
     end
   end
 
+  private
+  # так как все методы ниже должны использоваться только через текстовый интерфейс (метод main)
+
+  def menu_points
+    puts "1. Создать новую станцию
+2. Создать новый поезд
+3. Создать новый маршрут
+4. Добавить/удалить промежуточную станцию
+5. Назначить маршрут поезду
+6. Добавлять вагоны к поезду
+7. Отцеплять вагоны от поезда
+8. Перемещать поезд по маршруту вперед и назад
+9. Просматривать список станций
+10. Просмотреть список поездов на станции
+\nВведите номер из меню:"
+
+  end
+
   def add_station(name_station)
     stations << Station.new(name_station)
   end
 
   def add_passenger_train(number_train)
-    trains << PassengerTrain.new(number_train, 'passenger')
+    trains << PassengerTrain.new(number_train)
   end
 
   def add_cargo_train(number_train)
-    trains << CargoTrain.new(number_train, 'cargo')
+    trains << CargoTrain.new(number_train)
   end
 
   def add_route(first_station, last_station)
     routes << Route.new(first_station, last_station)
   end
 
-  private
   def create_station
     puts 'Введите название станции:'
     name_station = gets.chomp
     add_station(name_station)
   end
 
-  def create_train
+  def add_train
     puts 'Введите номер поезда:'
     number_train = gets.chomp
     puts 'Введите тип поезда по номеру:
             1 - пассажирский
             2 - грузовой'
-    type_train = gets.chomp
-    case type_train
+    case gets.chomp
     when '1'
       add_passenger_train(number_train)
     when '2'
@@ -99,6 +101,7 @@ class Main
   end
 
   def create_route
+    view_stations_list
     puts 'Введите индекс начальной станции:'
     first_station_index = gets.chomp.to_i
     first_station = stations.fetch(first_station_index)
@@ -141,7 +144,7 @@ class Main
   end
 
   def assign_train_route
-
+    view_trains_list
     puts 'Введите номер поезда'
     number_train = gets.chomp
     train = trains.find { |train| train.number == number_train }
@@ -156,7 +159,7 @@ class Main
   def add_wagon_to_train
     train = find_train
     wagon = wagons.find { |wagon| wagon.type == train.type }
-    train.add_wagon(wagon)
+    train.add_wagon(wagon, train.type)
   end
 
   def delete_wagon_from_train
@@ -222,6 +225,7 @@ class Main
   end
 
   def find_train
+    view_trains_list
     puts 'Введите номер поезда'
     number_train = gets.chomp
     trains.find { |train| train.number == number_train }

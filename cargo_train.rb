@@ -1,6 +1,12 @@
 class CargoTrain < Train
+  attr_reader :type
 
-  def add_wagon(cargo_wagon)
-    wagons.add(cargo_wagon) if current_speed.zero? && cargo_wagon.class.instance_of?(CargoWagon)
+  def initialize(number)
+    super(number, wagons)
+    @type = initial_type
+  end
+
+  def initial_type
+    :cargo
   end
 end

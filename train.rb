@@ -23,10 +23,10 @@ class Train
     current_station.get_train(self)
   end
 
-  def add_wagon(wagon)
-    wagons.push(wagon) if current_speed.zero?
+  def add_wagon(wagon, wagon_type)
+    @wagons << wagon if current_speed.zero? && wagon_type == self.type
   end
-
+  
   def delete_wagon(wagon)
     wagons.delete(wagon) if current_speed.zero? && wagons.count.positive?
   end
@@ -57,11 +57,10 @@ class Train
   end
 
   def current_station
-    self.route.stations[@station_index]
+    route.stations[@station_index]
   end
 
   def next_station
-    self.route.stations[@station_index + 1] unless route.stations[@station_index] == route.stations.last
+    route.stations[@station_index + 1] unless route.stations[@station_index] == route.stations.last
   end
 end
-
