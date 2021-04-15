@@ -23,12 +23,12 @@ class Train
     current_station.get_train(self)
   end
 
-  def add_wagon(wagon, wagon_type)
-    @wagons << wagon if current_speed.zero? && wagon_type == self.type
+  def add_wagon(wagon)
+    wagons << wagon if current_speed.zero? && wagon.type == type
   end
   
-  def delete_wagon(wagon)
-    wagons.delete(wagon) if current_speed.zero? && wagons.count.positive?
+  def delete_wagon
+    wagons.slice!(-1) if current_speed.zero? && wagons.count.positive?
   end
 
   def move_forward
