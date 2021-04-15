@@ -7,40 +7,29 @@ require_relative 'cargo_wagon'
 require_relative 'passenger_wagon'
 
 class Main
-  attr_reader :stations, :routes, :trains, :wagons 
+  attr_reader :stations, :routes, :trains #, :wagons
 
   def initialize
     @stations = []
     @routes = []
     @trains = []
-    @wagons = []
+    # @wagons = []
   end
 
   def menu
     menu_points
     user_input = gets.chomp.to_i
     case user_input
-    when 1
-      create_station
-    when 2
-      add_train
-    when 3
-      create_route
-    when 4
-      manage_route
-    when 5
-      assign_train_route
-    when 6
-      add_wagon_to_train
-    when 7
-      delete_wagon_from_train
-    when 8
-      move_train
-    when 9
-      view_stations_list
-    when 10
-      view_stations_list
-      view_trains_list_on_station
+    when 1 then create_station
+    when 2 then add_train
+    when 3 then create_route
+    when 4 then manage_route
+    when 5 then assign_train_route
+    when 6 then add_wagon_to_train
+    when 7 then delete_wagon_from_train
+    when 8 then move_train
+    when 9 then view_stations_list
+    when 10 then view_trains_list_on_station
     else 'Некорректное значение!'
     end
   end
@@ -49,16 +38,16 @@ class Main
   # так как все методы ниже должны использоваться только через текстовый интерфейс (метод main)
 
   def menu_points
-    puts "1. Создать новую станцию
-2. Создать новый поезд
-3. Создать новый маршрут
-4. Добавить/удалить промежуточную станцию
-5. Назначить маршрут поезду
-6. Добавлять вагоны к поезду
-7. Отцеплять вагоны от поезда
-8. Перемещать поезд по маршруту вперед и назад
-9. Просматривать список станций
-10. Просмотреть список поездов на станции
+    puts "1 - Создать новую станцию
+2 - Создать новый поезд
+3 - Создать новый маршрут
+4 - Добавить/удалить промежуточную станцию
+5 - Назначить маршрут поезду
+6 - Добавлять вагоны к поезду
+7 - Отцеплять вагоны от поезда
+8 - Перемещать поезд по маршруту вперед и назад
+9 - Просматривать список станций
+10 - Просмотреть список поездов на станции
 \nВведите номер из меню:"
 
   end
@@ -78,7 +67,7 @@ class Main
   def add_route(first_station, last_station)
     routes << Route.new(first_station, last_station)
   end
-
+  
   def create_station
     puts 'Введите название станции:'
     name_station = gets.chomp
@@ -139,8 +128,11 @@ class Main
     view_stations_list
     puts 'Введите название станции в этом маршруте для ее удаления:'
     transit_station = gets.chomp
-    route.delete_transit_station(transit_station) if route.stations.each { |station| station.name == transit_station }
-    puts "Маршрут изменен"
+    if route.stations.each { |station| station.name == transit_station }
+      route.delete_transit_station(transit_station)
+      puts "Маршрут изменен"
+    else 'Не удалось удалить станцию'
+    end
   end
 
   def assign_train_route
@@ -158,14 +150,18 @@ class Main
 
   def add_wagon_to_train
     train = find_train
-    wagon = wagons.find { |wagon| wagon.type == train.type }
-    train.add_wagon(wagon, train.type)
+    case train.type
+    when :passenger
+      train.add_wagon(PassengerWagon.new)
+    when :cargo
+      train.add_wagon(CargoWagon.new)
+    else 'Не удалось прицепить вагон'
+    end
   end
 
   def delete_wagon_from_train
     train = find_train
-    wagon = wagons.find { |wagon| wagon.type == train.type }
-    train.delete_wagon(wagon)
+    train.delete_wagon
   end
 
   def move_train
@@ -192,6 +188,7 @@ class Main
   end
 
   def view_trains_list_on_station
+    view_stations_list
     puts 'Введите индекс станции для просмотра поездов на ней:'
     station_index = gets.chomp.to_i
     puts 'Список имеющихся поездов на станции:'
@@ -200,7 +197,7 @@ class Main
 
   def view_routs_list
     puts 'Список имеющихся маршрутов:'
-    if routes.count > 0
+    if routes.count.positive?
       routes.each_with_index { |route, index| puts "#{index}. #{route.stations}" }
     else 'Маршрутов нет'
     end
@@ -230,23 +227,11 @@ class Main
     number_train = gets.chomp
     trains.find { |train| train.number == number_train }
   end
-
-  def choose_yes_or_no(message = 'Выберете д/н', yes_reply = 'д', false_reply = 'н')
-    puts message
-    case gets.chomp.downcase!
-    when yes_reply.downcase!
-      true
-    when false_reply.downcase!
-      false
-    else 'Некорректное значение!'
-    end
-  end
 end
 
 main = Main.new
 loop do
   main.menu
-  puts "\nНажмите любую клавишу, чтобы продолжить.\n"
 end
 
 
