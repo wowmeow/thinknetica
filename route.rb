@@ -8,11 +8,11 @@ class Route
   end
 
   def add_transit_station(station)
-    stations.insert(-2, station)
+    self.transit_stations << station
   end
 
   def delete_transit_station(station)
-    stations.delete(station)
+    self.stations.delete(station)
   end
 
   def stations
