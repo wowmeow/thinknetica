@@ -1,11 +1,25 @@
+require_relative 'instance_counter'
+require_relative 'manufacturer'
+
 class Train
+  include InstanceCounter
+  include Manufacturer
+
   attr_reader :type, :route, :current_speed, :wagons, :number
+
+  @@all_instances = []
 
   def initialize(number, type)
     @number = number
     @type = type
     @wagons = []
     @current_speed = 0
+    @@all_instances << self
+    register_instance
+  end
+
+  def self.find_by_number(number)
+    @@all_instances.find { |train| train.number == number } || nil
   end
 
   def increase_speed(speed)
@@ -24,11 +38,11 @@ class Train
   end
 
   def add_wagon(wagon)
-    wagons << wagon if current_speed.zero? && wagon.type == type
+    @wagons << wagon if current_speed.zero? && wagon.type == type
   end
   
   def delete_wagon
-    wagons.slice!(-1) if current_speed.zero? && wagons.count.positive?
+    @wagons.slice!(-1) if current_speed.zero? && @wagons.count.positive?
   end
 
   def move_forward
@@ -53,14 +67,14 @@ class Train
   # Все методы ниже не должны быть доступны через клиентский код
 
   def previous_station
-    route.stations[@station_index - 1] if @station_index.positive?
+    @route.stations[@station_index - 1] if @station_index.positive?
   end
 
   def current_station
-    route.stations[@station_index]
+    @route.stations[@station_index]
   end
 
   def next_station
-    route.stations[@station_index + 1] unless route.stations[@station_index] == route.stations.last
+    @route.stations[@station_index + 1] unless @route.stations[@station_index] == @route.stations.last
   end
 end
