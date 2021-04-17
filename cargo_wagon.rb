@@ -1,8 +1,7 @@
 require_relative 'wagon'
 
 class CargoWagon < Wagon
-
-  def initial(type = initial_type)
+  def initialize(type = initial_type)
     super
   end
 
