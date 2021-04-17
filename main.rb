@@ -3,17 +3,17 @@ require_relative 'route'
 require_relative 'train'
 require_relative 'cargo_train'
 require_relative 'passenger_train'
+require_relative 'wagon'
 require_relative 'cargo_wagon'
 require_relative 'passenger_wagon'
 
 class Main
-  attr_reader :stations, :routes, :trains #, :wagons
+  attr_reader :stations, :routes, :trains
 
   def initialize
     @stations = []
     @routes = []
     @trains = []
-    # @wagons = []
   end
 
   def menu
@@ -49,7 +49,6 @@ class Main
 9 - Просматривать список станций
 10 - Просмотреть список поездов на станции
 \nВведите номер из меню:"
-
   end
 
   def add_station(name_station)
@@ -224,14 +223,14 @@ class Main
   def find_train
     view_trains_list
     puts 'Введите номер поезда'
-    number_train = gets.chomp
-    trains.find { |train| train.number == number_train }
+    train_number = gets.chomp
+    Train.find_by_number(train_number)
   end
 end
 
 main = Main.new
 loop do
-  main.menu
+main.menu
 end
 
 
