@@ -6,7 +6,6 @@ class PassengerTrain < Train
   def initialize(number)
     super(number, wagons)
     @type = initial_type
-    register_instance
   end
 
   def initial_type
