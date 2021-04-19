@@ -35,8 +35,6 @@ class Main
   end
 
   private
-  # так как все методы ниже должны использоваться только через текстовый интерфейс (метод main)
-
   def menu_points
     puts "1 - Создать новую станцию
 2 - Создать новый поезд
@@ -66,7 +64,7 @@ class Main
   def add_route(first_station, last_station)
     routes << Route.new(first_station, last_station)
   end
-  
+
   def create_station
     puts 'Введите название станции:'
     name_station = gets.chomp
@@ -80,10 +78,8 @@ class Main
             1 - пассажирский
             2 - грузовой'
     case gets.chomp
-    when '1'
-      add_passenger_train(number_train)
-    when '2'
-      add_cargo_train(number_train)
+    when '1' then add_passenger_train(number_train)
+    when '2' then add_cargo_train(number_train)
     else 'Некорректное значение'
     end
   end
@@ -119,7 +115,7 @@ class Main
     transit_station_index = gets.chomp.to_i
     transit_station = stations.fetch(transit_station_index)
     route.add_transit_station(transit_station)
-    puts "Маршрут изменен"
+    puts 'Маршрут изменен'
   end
 
   def delete_station_from_route
@@ -129,7 +125,7 @@ class Main
     transit_station = gets.chomp
     if route.stations.each { |station| station.name == transit_station }
       route.delete_transit_station(transit_station)
-      puts "Маршрут изменен"
+      puts 'Маршрут изменен'
     else 'Не удалось удалить станцию'
     end
   end
@@ -169,10 +165,8 @@ class Main
             1 - переместить поед вперед
             2 - переместить поезд назад'
     case gets.chomp
-    when '1'
-      train.move_forward
-    when '2'
-      train.move_back
+    when '1' then train.move_forward
+    when '2' then train.move_back
     else 'Некорректное значение!'
     end
   end
@@ -207,7 +201,7 @@ class Main
     first_station = gets.chomp
     puts 'Введите последнюю  станцию:'
     last_station = gets.chomp
-    route = routes.find { |route| route.first_station == first_station && route.last_station == last_station}
+    route = routes.find { |route| route.first_station == first_station && route.last_station == last_station }
     puts "Выбранный маршрут: #{route.stations}"
   end
 
@@ -230,7 +224,7 @@ end
 
 main = Main.new
 loop do
-main.menu
+  main.menu
 end
 
 
