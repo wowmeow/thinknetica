@@ -7,19 +7,23 @@ class Train
 
   attr_reader :type, :route, :current_speed, :wagons, :number
 
-  @@all_instances = []
+  @@all_instances = {}
 
   def initialize(number, type)
     @number = number
     @type = type
     @wagons = []
     @current_speed = 0
-    @@all_instances << self
+    add_to_all_instance(number)
     register_instance
   end
 
+  def add_to_all_instance(number);
+    @@all_instances.update({ number.to_sym => [self] })
+  end
+
   def self.find_by_number(number)
-    @@all_instances.find { |train| train.number == number } || nil
+    @@all_instances[number.to_sym]
   end
 
   def increase_speed(speed)
@@ -38,7 +42,8 @@ class Train
   end
 
   def add_wagon(wagon)
-    @wagons << wagon if current_speed.zero? && wagon.type == type
+    wagon.type
+    # @wagons << wagon if current_speed.zero? && wagon.type == type
   end
   
   def delete_wagon
