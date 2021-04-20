@@ -1,15 +1,12 @@
 require_relative 'wagon'
 
 class PassengerWagon < Wagon
-
-  def initial(type = initial_type)
+  def initialize(type = initial_type)
     super
   end
 
-
   def initial_type
-    :passenger
+    :cargo
   end
-
 end
 
