@@ -1,12 +1,13 @@
-require_relative '../on'
+require_relative 'wagon'
 
 class PassengerWagon < Wagon
-  def initialize(type = initial_type)
-    super
+  def initialize
+    super(TYPE_PASSENGER)
   end
 
-  def initial_type
-    :cargo
+  protected def validate!
+    super
+    raise "Type mast be 'passenger' or 'cargo'" if type != TYPE_PASSENGER
   end
 end
 

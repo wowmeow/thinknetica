@@ -1,3 +1,12 @@
+require_relative 'station'
+require_relative 'route'
+require_relative 'trains/train'
+require_relative 'trains/cargo_train'
+require_relative 'trains/passenger_train'
+require_relative 'wagons/wagon'
+require_relative 'wagons/cargo_wagon'
+require_relative 'wagons/passenger_wagon'
+
 class Interface
   attr_reader :stations, :routes, :trains
 
@@ -12,109 +21,131 @@ class Interface
   def start
     loop do
       menu
-      break if MENU_EXIT
+      break if menu == MENU_EXIT
     end
   end
 
   def menu
     menu_points
-    user_input = gets.chomp.to_i
+    user_input = gets.chomp
     case user_input
-    when 0 then MENU_EXIT
-    when 1 then create_station
-    when 2 then add_train
-    when 3 then create_route
-    when 4 then manage_route
-    when 5 then assign_train_route
-    when 6 then add_wagon_to_train
-    when 7 then delete_wagon_from_train
-    when 8 then move_train
-    when 9 then view_stations_list
-    when 10 then view_trains_list_on_station
+    when '0' then MENU_EXIT
+    when '1' then create_station
+    when '2' then create_train
+    when '3' then create_route
+    when '4' then manage_route
+    when '5' then assign_train_route
+    when '6' then add_wagon_to_train
+    when '7' then delete_wagon_from_train
+    when '8' then move_train
+    when '9' then view_stations_list
+    when '10' then view_trains_list_on_station
     else 'Некорректное значение!'
     end
   end
 
-  private
   def menu_points
-    puts"    0 - Выйти из меню
+    puts "\n    0 - Выйти из меню
     1 - Создать новую станцию
     2 - Создать новый поезд
     3 - Создать новый маршрут
     4 - Добавить/удалить промежуточную станцию
     5 - Назначить маршрут поезду
-    6 - Добавлять вагоны к поезду
-    7 - Отцеплять вагоны от поезда
-    8 - Перемещать поезд по маршруту вперед и назад
-    9 - Просматривать список станций
+    6 - Добавить вагон к поезду
+    7 - Отцепить вагон от поезда
+    8 - Переместить поезд по маршруту вперед/назад
+    9 - Просмотреть список станций
     10 - Просмотреть список поездов на станции
     \nВведите номер из меню:"
   end
 
-  def add_station(name_station)
-    stations << Station.new(name_station)
-  end
-
-  def add_passenger_train(number_train)
-    trains << PassengerTrain.new(number_train)
-  end
-
-  def add_cargo_train(number_train)
-    trains << CargoTrain.new(number_train)
-  end
-
-  def add_route(first_station, last_station)
-    routes << Route.new(first_station, last_station)
-  end
-
   def create_station
-    puts 'Введите название станции:'
-    name_station = gets.chomp
-    add_station(name_station)
+    begin
+      puts 'Введите название станции (минимум 2 буквы):'
+      name_station = gets.chomp
+      stations << Station.new(name_station)
+      rescue RuntimeError
+        puts 'Некорректное название станции!'
+        retry
+    end
+    puts "Станция #{name_station} успешно создана."
   end
 
-  def add_train
-    puts 'Введите номер поезда:'
-    number_train = gets.chomp
-    puts 'Введите тип поезда по номеру:
+  def create_train
+    begin
+      puts 'Введите тип поезда по номеру:
             1 - пассажирский
             2 - грузовой'
-    case gets.chomp
-    when '1' then add_passenger_train(number_train)
-    when '2' then add_cargo_train(number_train)
-    else 'Некорректное значение'
+      type = gets.chomp
+      raise ArgumentExeption if type != 1 || 2
+    rescue ArgumentExeption
+      puts 'Некорректное значение!'
+      retry
     end
+    begin
+      puts "Введите номер поезда в формате '___-__' или '_____':"
+      number_train = gets.chomp
+      trains << (user_input == '1' ? PassengerTrain.new(number_train) : CargoTrain.new(number_train))
+    rescue
+      puts "Номер поезда не соответствует заданному формату!"
+      retry
+    end
+    
+    type = user_input == '1' ? 'пассажирского' : 'грузового'
+    puts "Поезд с номером #{number_train} #{type} типа успешно создан."
   end
 
   def create_route
     view_stations_list
-    puts 'Введите индекс начальной станции:'
-    first_station_index = gets.chomp.to_i
+    
+    begin
+      puts 'Введите индекс начальной станции:'
+      first_station_index = gets.chomp.to_i
+      raise ArgumentExeption if first_station_index < 0 && first_station_index > stations.count
+    rescue ArgumentExeption
+      puts 'Такого индекса нет!'
+      retry
+    end
     first_station = stations.fetch(first_station_index)
-    puts 'Введите индекс конечной станции:'
-    last_station__index = gets.chomp.to_i
+    
+    begin
+      puts 'Введите индекс конечной станции:'
+      last_station__index = gets.chomp.to_i 
+      raise ArgumentExeption if first_station_index < 0 && first_station_index > stations.count
+    rescue ArgumentExeption
+      puts 'Такого индекса нет!'
+      retry
+    end
+    
     last_station = stations.fetch(last_station__index)
-    add_route(first_station, last_station)
+    routes << Route.new(first_station, last_station)
   end
 
   def manage_route
-    puts "\nВведите номер действия:
+    begin
+      puts "\nВведите номер действия:
             1 - добавить станцию
             2 - удалить станцию"
-    case gets.chomp
-    when '1'
-      add_station_to_route
-    when '2'
-      delete_station_from_route
-    else 'Некорректное значение!'
+    user_input = gets.chomp
+    raise ArgumentExeption if user_input != 1 || 2
+    rescue ArgumentExeption
+      puts 'Такого номера нет'
+      retry
     end
+    user_input == '1' ? add_station_to_route : delete_station_from_route
   end
 
   def add_station_to_route
     route = find_route_by_index
     view_stations_list
-    puts 'Введите индекс станции для ее добавления в маршрут:'
-    transit_station_index = gets.chomp.to_i
+    begin
+      puts 'Введите индекс станции для ее добавления в маршрут:'
+      transit_station_index = gets.chomp.to_i
+      raise ArgumentExeption if transit_station_index < 0 && transit_station_index > stations.count
+      rescue ArgumentExeption
+        puts 'Такого индекса нет!'
+        retry
+    end
     transit_station = stations.fetch(transit_station_index)
     route.add_transit_station(transit_station)
     puts 'Маршрут изменен'
@@ -123,20 +154,25 @@ class Interface
   def delete_station_from_route
     route = find_route_by_index
     view_stations_list
-    puts 'Введите название станции в этом маршруте для ее удаления:'
-    transit_station = gets.chomp
-    if route.stations.each { |station| station.name == transit_station }
-      route.delete_transit_station(transit_station)
-      puts 'Маршрут изменен'
-    else 'Не удалось удалить станцию'
+    begin
+      puts 'Введите название станции в этом маршруте для ее удаления:'
+      transit_station = gets.chomp
+      raise ArgumentExeption if route.stations.each { |station| station.name == transit_station }
+    rescue ArgumentExeption
+      puts 'Такой станции в маршруте нет!'
+      retry
     end
+    route.delete_transit_station(transit_station)
+    puts 'Маршрут изменен'
   end
 
   def assign_train_route
     view_trains_list
+    begin
     puts 'Введите номер поезда'
     number_train = gets.chomp
     train = trains.find { |train| train.number == number_train }
+    end
 
     view_routs_list
     puts 'Введите индекс маршрута:'
@@ -198,15 +234,6 @@ class Interface
     end
   end
 
-  def find_route_by_stations
-    puts 'Введите первую станцию:'
-    first_station = gets.chomp
-    puts 'Введите последнюю  станцию:'
-    last_station = gets.chomp
-    route = routes.find { |route| route.first_station == first_station && route.last_station == last_station }
-    puts "Выбранный маршрут: #{route.stations}"
-  end
-
   def find_route_by_index
     view_routs_list
     puts 'Введите индекс маршрута:'
@@ -222,4 +249,42 @@ class Interface
     train_number = gets.chomp
     Train.find_by_number(train_number)
   end
+
+
+  public
+
+  # used for testing
+  def seed
+    puts Station.all
+       puts Station.instances
+       msc = Station.new('msc')
+       puts "St_count: #{Station.instances}"
+       puts '----------------------------------------------------------------------'
+       puts "Traincount: #{Train.instances}"
+       puts "PassengerTrain count: #{PassengerTrain.instances}"
+       puts "CargoTrain count: #{CargoTrain.instances}"
+
+       try02 = Train.new('try02', :cargo)
+       try01 = Train.new('try01', :passenger)
+
+       try03 = PassengerTrain.new('try-03')
+       try04 = PassengerTrain.new('try04')
+       try05 = CargoTrain.new('try-05')
+
+
+       # ct1.add_wagon(Wagon.new(:cargo))
+       # ct1.add_wagon(Wagon.new(:cargo))
+       # try01.add_wagon(Wagon.new(:passenger))
+       # try01.add_wagon(Wagon.new(:passenger))
+       # try01.add_wagon(Wagon.new(:passenger))
+       # pt1.add_wagon(Wagon.new(:passenger))
+       # puts '- - - - - -'
+       # puts "try01: #{Train.find_by_number('try01')}"
+       # puts "pt2: #{PassengerTrain.find_by_number('pt2')}"
+       # puts "Tr_count: #{Train.instances}"
+       # puts "PassTr_count: #{PassengerTrain.instances}"
+       # puts "CargoTr_count: #{CargoTrain.instances}"
+  end
 end
+
+
