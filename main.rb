@@ -8,6 +8,4 @@ require_relative 'wagons/cargo_wagon'
 require_relative 'wagons/passenger_wagon'
 require_relative 'interface'
 
-Interface.new.seed
-puts '============================================================================================'
 Interface.new.start
