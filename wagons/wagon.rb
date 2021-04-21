@@ -1,4 +1,4 @@
-require_relative 'manufacturer'
+require_relative '../modules/manufacturer'
 
 class Wagon
   include Manufacturer

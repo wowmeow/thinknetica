@@ -1,4 +1,4 @@
-require_relative 'instance_counter'
+require_relative '../modules/instance_counter'
 require_relative 'manufacturer'
 
 class Train
@@ -18,7 +18,7 @@ class Train
     register_instance
   end
 
-  def add_to_all_instance(number);
+  def add_to_all_instance(number)
     @@all_instances.update({ number.to_sym => [self] })
   end
 
@@ -69,8 +69,6 @@ class Train
   end
 
   protected
-  # Все методы ниже не должны быть доступны через клиентский код
-
   def previous_station
     @route.stations[@station_index - 1] if @station_index.positive?
   end

@@ -1,4 +1,4 @@
-require_relative 'instance_counter'
+require_relative 'modules/instance_counter'
 
 class Station
   include InstanceCounter
@@ -21,13 +21,10 @@ class Station
   end
 
   private
-
-  # Только сама станция принимает поезд
   def get_train(train)
     @trains << train
   end
 
-  # Только сама станция позволяет поезду уехать
   def send_train(train)
     @trains.delete(train)
   end

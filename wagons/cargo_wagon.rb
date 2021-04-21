@@ -1,6 +1,6 @@
-require_relative 'wagon'
+require_relative '../on'
 
-class PassengerWagon < Wagon
+class CargoWagon < Wagon
   def initialize(type = initial_type)
     super
   end
@@ -9,4 +9,3 @@ class PassengerWagon < Wagon
     :cargo
   end
 end
-
