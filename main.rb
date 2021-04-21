@@ -11,7 +11,3 @@ require_relative 'interface'
 class Main
   Interface.new.start
 end
-
-
-
-
