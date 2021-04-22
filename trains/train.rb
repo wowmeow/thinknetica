@@ -1,21 +1,33 @@
 require_relative '../modules/instance_counter'
-require_relative 'manufacturer'
+require_relative '../modules/manufacturer'
 
 class Train
   include InstanceCounter
   include Manufacturer
 
-  attr_reader :type, :route, :current_speed, :wagons, :number
+  TYPE_PASSENGER = :passenger
+  TYPE_CARGO = :cargo
+  TRAIN_NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i.freeze
 
   @@all_instances = {}
+
+  attr_reader :type, :route, :current_speed, :wagons, :number
 
   def initialize(number, type)
     @number = number
     @type = type
+    validate!
     @wagons = []
     @current_speed = 0
     add_to_all_instance(number)
     register_instance
+  end
+
+  def valid?
+    validate!
+    true
+  rescue StandardError
+    false
   end
 
   def add_to_all_instance(number)
@@ -43,7 +55,6 @@ class Train
 
   def add_wagon(wagon)
     wagon.type
-    # @wagons << wagon if current_speed.zero? && wagon.type == type
   end
   
   def delete_wagon
@@ -69,6 +80,11 @@ class Train
   end
 
   protected
+  def validate!
+    raise 'Train number has invalid format!' if number !~ TRAIN_NUMBER_FORMAT
+    raise "Type can't be nil or empty!" if type.nil? || type.size.zero?
+  end
+
   def previous_station
     @route.stations[@station_index - 1] if @station_index.positive?
   end
