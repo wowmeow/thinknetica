@@ -5,8 +5,6 @@ class Train
   include InstanceCounter
   include Manufacturer
 
-  TYPE_PASSENGER = :passenger
-  TYPE_CARGO = :cargo
   TRAIN_NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i.freeze
 
   @@all_instances = {}
