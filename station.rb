@@ -27,6 +27,10 @@ class Station
     @@all_stations
   end
 
+  def all_trains_to(&block)
+    @trains.count > 0 ? @trains.each(&block) : (puts 'Поездов нет')
+  end
+
   def trains_by_type(type)
     @trains.count { |train| train.type == type }
   end

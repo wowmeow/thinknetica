@@ -7,7 +7,7 @@ class Train
 
   TRAIN_NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i.freeze
 
-  @@all_instances = {}
+  @@all_trains = {}
 
   attr_reader :type, :route, :current_speed, :wagons, :number
 
@@ -28,12 +28,16 @@ class Train
     false
   end
 
+  def all_wagons_to(&block)
+    @wagons.each(&block)
+  end
+
   def add_to_all_instance(number)
-    @@all_instances.update({ number.to_sym => [self] })
+    @@all_trains.update({ number.to_sym => [self] })
   end
 
   def self.find_by_number(number)
-    @@all_instances[number.to_sym]
+    @@all_trains[number.to_sym]
   end
 
   def increase_speed(speed)

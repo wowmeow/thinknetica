@@ -3,10 +3,11 @@ require_relative 'wagon'
 class PassengerWagon < Wagon
   attr_reader :seats_number, :occupied_seats_number
 
-  def initialize(seats_number)
+  def initialize(seats_number = 0)
     super(initial_type)
     @seats_number = seats_number
     @occupied_seats_number = 0
+    validate!
   end
 
   def take_seat
@@ -18,13 +19,14 @@ class PassengerWagon < Wagon
   end
 
   protected def validate!
-    super
+    raise "Type can't be empty!" if type.nil?
     raise 'Invalid wagon type!' if type != initial_type
+    raise "Seats number can't be empty!" if seats_number.nil?
+    raise "Seats number can't be negative!" if seats_number.negative?
+    raise 'Seats number must be an integer!' unless Integer(seats_number)
   end
 
-  private
-  def initial_type
+  private def initial_type
     :passenger
   end
 end
-

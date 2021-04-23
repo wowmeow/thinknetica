@@ -18,8 +18,10 @@ class CargoWagon < Wagon
   end
 
   protected def validate!
-    super
+    raise "Type can't be empty!" if type.nil?
     raise "Invalid wagon type!" if type != initial_type
+    raise "Total volume can't be empty!" if total_volume.nil?
+    raise "Total volume can't be negative!" if total_volume.negative?
   end
 
   private
