@@ -28,7 +28,7 @@ class Station
   end
 
   def all_trains_to(&block)
-    @trains.count > 0 ? @trains.each(&block) : (puts 'Поездов нет')
+    @trains.count.positive? ? @trains.each(&block) : 0
   end
 
   def trains_by_type(type)
@@ -36,6 +36,7 @@ class Station
   end
 
   private
+
   def validate!
     raise "Station name can't be empty!" if name.nil?
     raise "Station name has invalid format!" if name !~ STATION_NAME_FORMAT

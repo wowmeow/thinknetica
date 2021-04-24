@@ -33,11 +33,11 @@ class Train
   end
 
   def add_to_all_instance(number)
-    @@all_trains.update({ number.to_sym => [self] })
+    @@all_trains[number.to_sym] = self
   end
 
   def self.find_by_number(number)
-    @@all_trains[number.to_sym]
+    @@all_trains[number]
   end
 
   def increase_speed(speed)
@@ -82,6 +82,7 @@ class Train
   end
 
   protected
+
   def validate!
     raise 'Train number has invalid format!' if number !~ TRAIN_NUMBER_FORMAT
     raise "Type can't be nil or empty!" if type.nil? || type.size.zero?

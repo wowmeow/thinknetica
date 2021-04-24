@@ -8,6 +8,7 @@ class PassengerTrain < Train
   end
 
   private
+
   def initial_type
     :passenger
   end

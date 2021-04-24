@@ -7,5 +7,7 @@ require_relative 'wagons/wagon'
 require_relative 'wagons/cargo_wagon'
 require_relative 'wagons/passenger_wagon'
 require_relative 'interface'
+require_relative 'test'
 
 Interface.new.start
+# Test.new.seed

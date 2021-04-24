@@ -18,8 +18,10 @@ class PassengerWagon < Wagon
     seats_number - occupied_seats_number
   end
 
-  protected def validate!
-    raise "Type can't be empty!" if type.nil?
+  protected
+
+  def validate!
+    super
     raise 'Invalid wagon type!' if type != initial_type
     raise "Seats number can't be empty!" if seats_number.nil?
     raise "Seats number can't be negative!" if seats_number.negative?
