@@ -27,11 +27,16 @@ class Station
     @@all_stations
   end
 
+  def all_trains_to(&block)
+    @trains.count.positive? ? @trains.each(&block) : 0
+  end
+
   def trains_by_type(type)
     @trains.count { |train| train.type == type }
   end
 
   private
+
   def validate!
     raise "Station name can't be empty!" if name.nil?
     raise "Station name has invalid format!" if name !~ STATION_NAME_FORMAT

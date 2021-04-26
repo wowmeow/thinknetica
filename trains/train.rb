@@ -5,11 +5,9 @@ class Train
   include InstanceCounter
   include Manufacturer
 
-  TYPE_PASSENGER = :passenger
-  TYPE_CARGO = :cargo
   TRAIN_NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i.freeze
 
-  @@all_instances = {}
+  @@all_trains = {}
 
   attr_reader :type, :route, :current_speed, :wagons, :number
 
@@ -30,12 +28,16 @@ class Train
     false
   end
 
+  def all_wagons_to(&block)
+    @wagons.each(&block)
+  end
+
   def add_to_all_instance(number)
-    @@all_instances.update({ number.to_sym => [self] })
+    @@all_trains[number.to_sym] = self
   end
 
   def self.find_by_number(number)
-    @@all_instances[number.to_sym]
+    @@all_trains[number]
   end
 
   def increase_speed(speed)
@@ -80,6 +82,7 @@ class Train
   end
 
   protected
+
   def validate!
     raise 'Train number has invalid format!' if number !~ TRAIN_NUMBER_FORMAT
     raise "Type can't be nil or empty!" if type.nil? || type.size.zero?

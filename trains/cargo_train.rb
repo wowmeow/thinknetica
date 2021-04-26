@@ -8,6 +8,7 @@ class CargoTrain < Train
   end
 
   private
+
   def initial_type
     :cargo
   end
