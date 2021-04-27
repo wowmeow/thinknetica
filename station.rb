@@ -1,17 +1,27 @@
 require_relative 'modules/instance_counter'
+require_relative 'modules/accessor'
+require_relative 'modules/validation'
 
 class Station
   include InstanceCounter
+  include Validation
+  extend Accessor
 
   STATION_NAME_FORMAT = /^[a-zа-я]{2,}/i.freeze
   @@all_stations = []
 
   attr_reader :name, :trains
 
+  attr_accessor_with_history :example_with
+  strong_attr_accessor :example, Symbol
+
+  validate :name, :presence
+  validate :name, :format, STATION_NAME_FORMAT
+
   def initialize(name)
     @name = name
-    validate!
     @trains = []
+    validate!
     @@all_stations << self
     register_instance
   end
@@ -36,11 +46,6 @@ class Station
   end
 
   private
-
-  def validate!
-    raise "Station name can't be empty!" if name.nil?
-    raise "Station name has invalid format!" if name !~ STATION_NAME_FORMAT
-  end
 
   def get_train(train)
     @trains << train
