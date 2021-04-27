@@ -1,7 +1,9 @@
 require_relative '../modules/manufacturer'
+require_relative '../modules/validation'
 
 class Wagon
   include Manufacturer
+  include Validation
 
   attr_reader :type
 

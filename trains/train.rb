@@ -1,15 +1,21 @@
 require_relative '../modules/instance_counter'
 require_relative '../modules/manufacturer'
+require_relative '../modules/validation'
 
 class Train
   include InstanceCounter
   include Manufacturer
+  include Validation
 
   TRAIN_NUMBER_FORMAT = /^[0-9a-zа-я]{3}-*[0-9a-zа-я]{2}$/i.freeze
 
   @@all_trains = {}
 
   attr_reader :type, :route, :current_speed, :wagons, :number
+
+  validate :number, :presence
+  validate :number, :format, TRAIN_NUMBER_FORMAT
+  validate :number, :type, String
 
   def initialize(number, type)
     @number = number
@@ -58,7 +64,7 @@ class Train
   def add_wagon(wagon)
     wagon.type
   end
-  
+
   def delete_wagon
     @wagons.slice!(-1) if current_speed.zero? && @wagons.count.positive?
   end
@@ -73,12 +79,12 @@ class Train
   end
 
   def move_back
-    if @station_index.positive?
-      current_station.send_train(self)
-      @station_index += 1
-      current_station.get_train(self)
-      current_station
-    end
+    return unless @station_index.positive?
+
+    current_station.send_train(self)
+    @station_index += 1
+    current_station.get_train(self)
+    current_station
   end
 
   protected
